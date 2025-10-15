@@ -1,6 +1,6 @@
 defaultNamespace: devops
 helm:
-  chart: https://github.com/YOUR_OWNER/sms-dashboard.git//deploy/helm/sms-dashboard?ref=main
+  chart: https://github.com/ghadeb/sms-dashboard.git//deploy/helm/sms-dashboard?ref=main
   releaseName: sms-dashboard
   valuesFiles:
     - ./helm/values.yaml
