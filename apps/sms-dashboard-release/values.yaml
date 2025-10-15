@@ -1,18 +1,19 @@
 namespace: devops
 
 image:
-  repository: ghcr.io/ghadeb/sms-dashboard   # change YOUR_OWNER
+  repository: ghcr.io/ghadeb/sms-dashboard
   tag: latest
   pullPolicy: IfNotPresent
 
 imagePullSecrets:
-  - name: ghcr-creds   # we’ll create this in Rancher
+  - name: ghcr-creds   # create in Rancher (namespace devops)
 
-replicaCount: 2
+replicaCount:
+  api: 2
+  worker: 1
 
 service:
-  type: ClusterIP
-  port: 3000
+  port: 8000
 
 ingress:
   enabled: true
@@ -20,14 +21,29 @@ ingress:
   host: sms-dashboard.cs-labs.ai
   tlsSecretName: sms-dashboard-tls
 
-podAnnotations:
-  external-dns.alpha.kubernetes.io/hostname: sms-dashboard.cs-labs.ai
-  external-dns.alpha.kubernetes.io/security-policy: Local
+uploads:
+  storageClass: local-path
+  size: 10Gi
 
-resources:
-  requests:
-    cpu: "200m"
-    memory: "256Mi"
-  limits:
-    cpu: "500m"
-    memory: "512Mi"
+redis:
+  enabled: true
+  image: redis:7
+  port: 6379
+
+postgres:
+  enabled: true
+  image: postgres:15
+  port: 5432
+  storageClass: local-path
+  size: 10Gi
+  db: smsapp
+  user: smsuser
+  # IMPORTANT: set this in Rancher UI (do not commit):
+  password: ""
+
+secrets:
+  # IMPORTANT: set these in Rancher UI (do not commit):
+  jwtSecret: ""
+  fernetKey: ""
+
+siteName: "SMS Dashboard"
